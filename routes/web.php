@@ -23,4 +23,5 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix('people')->group(function(){
     Route::get('new', [PeopleController::class, 'create']);
+    Route::post('insert', [PeopleController::class, 'insert']);
 });
