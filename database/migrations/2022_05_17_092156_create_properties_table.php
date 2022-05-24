@@ -16,7 +16,8 @@ class CreatePropertiesTable extends Migration
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreign('causer_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('causer_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('causer_id')->constrained('users');
             $table->timestamps();
         });
     }
