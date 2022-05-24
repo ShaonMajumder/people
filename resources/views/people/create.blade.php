@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+$(document).ready(function() {
+  $("#property").select2({
+      tags: true,
+      tokenSeparators: [',', ' ']
+  });
+});
+
+</script>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -21,10 +30,9 @@
                         <div class="form-group">
                           <label for="inputPropery">Property Name</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
-                          <select class="form-control" multiple="multiple">
-                            <option selected="selected">orange</option>
-                            <option>white</option>
-                            <option selected="selected">purple</option>
+                          <select id="property" name="states[]" multiple="multiple">
+                            <option value="AL">Alabama</option>
+                            <option value="WY">Wyoming</option>
                           </select>
                           <small id="propertyHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                         </div>
@@ -43,4 +51,5 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
