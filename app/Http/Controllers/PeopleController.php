@@ -19,5 +19,6 @@ class PeopleController extends Controller
     public function insert(Request $request){
         if( ! Property::where('name',$request->property)->first() )
             dd( Property::where('name',$request->property)->first() );
+            // response do you want to add it ?
     }
 }
