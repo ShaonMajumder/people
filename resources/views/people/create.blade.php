@@ -54,6 +54,12 @@ $(document).ready(function() {
 </div>
 <script type="text/javascript">
 $(document).ready( function() {
+  toastr.options =
+  {
+  	"closeButton" : true,
+  	"progressBar" : true
+  };
+
   $("#form").submit(function(e){
     
     e.preventDefault();
@@ -70,10 +76,10 @@ $(document).ready( function() {
         value:value
       },
       success:function(response){
-        console.log(response);
+        toastr.success(response.message);
       },
       error: function(response) {
-
+        toastr.error(response.message);
       },
     });
   });

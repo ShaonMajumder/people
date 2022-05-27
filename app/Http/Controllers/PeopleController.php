@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Components\Message;
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class PeopleController extends Controller
 {
+    use Message;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -17,8 +22,14 @@ class PeopleController extends Controller
     }
 
     public function insert(Request $request){
-        if( ! Property::where('name',$request->property)->first() )
-            dd( Property::where('name',$request->property)->first() );
-            // response do you want to add it ?
+        if( ! Property::where('name',$request->property)->first() ){
+            $property = new Property();
+            $property->name = $request->property;
+            $property->causer_id = Auth::user()->id;
+            $property->save();
+            $this->apiSuccess();
+            return $this->apiOutput(Response::HTTP_OK, "New Property '$property->name' added ...");
+        }
+            
     }
 }
