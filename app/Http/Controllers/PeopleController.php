@@ -14,7 +14,7 @@ class PeopleController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     public function create(){
@@ -30,6 +30,12 @@ class PeopleController extends Controller
             $this->apiSuccess();
             return $this->apiOutput(Response::HTTP_OK, "New Property '$property->name' added ...");
         }
-            
+    }
+
+    public function listProperties(){
+        $properties = Property::get();
+        $this->data = $properties->toJson();
+        $this->apiSuccess();
+        return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
     }
 }

@@ -23,5 +23,6 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix('people')->group(function(){
     Route::get('new', [PeopleController::class, 'create']);
+    Route::get('listproperties', [PeopleController::class, 'listproperties']);
     Route::post('insert', [PeopleController::class, 'insert']);
 });

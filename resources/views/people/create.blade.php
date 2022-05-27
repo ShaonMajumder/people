@@ -31,19 +31,12 @@ $(document).ready(function() {
                         <div class="form-group">
                           <label for="inputPropery">Property Name</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
-                          <select  id="property" name="property" >
-                            <option value="AL">Alabama</option>
-                            <option value="WY">Wyoming</option>
-                          </select>
-                          <small id="propertyHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                          <select style="width:100%;"   id="property" name="property" ></select>
+                          {{-- <small id="propertyHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
                         </div>
                         <div class="form-group">
                           <label for="value">Value</label>
                           <input type="password" class="form-control" id="value" name="value" placeholder="Password">
-                        </div>
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                          <label class="form-check-label" for="exampleCheck1">Check me out</label>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -59,6 +52,17 @@ $(document).ready( function() {
   	"closeButton" : true,
   	"progressBar" : true
   };
+
+  $.getJSON("/people/listproperties",function(response){
+    let data = response.data;
+    data = JSON.parse(data); //convert to javascript array
+    values = '';
+    $.each(data,function(key,value){
+      values+="<option value='"+value.id+"'>"+value.name+"</option>";
+    });
+    $("#property").html(values); 
+  });
+
 
   $("#form").submit(function(e){
     
@@ -76,6 +80,7 @@ $(document).ready( function() {
         value:value
       },
       success:function(response){
+
         toastr.success(response.message);
       },
       error: function(response) {
