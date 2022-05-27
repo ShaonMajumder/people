@@ -23,9 +23,6 @@ $(document).ready(function() {
                         </div>
                     @endif
                     
-
-
-
                     <form id="form" action="{{url('people/insert')}}" method="post">
                       @csrf
                         <div class="form-group">
@@ -38,7 +35,7 @@ $(document).ready(function() {
                         </div>
                         <div class="form-group">
                           <label for="value">Value</label>
-                          <input type="text" class="form-control" id="value" name="value" placeholder="Password">
+                          <input type="text" class="form-control" id="value" name="value" placeholder="Value">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
