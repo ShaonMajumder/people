@@ -22,21 +22,46 @@ $(document).ready(function() {
                             {{ session('status') }}
                         </div>
                     @endif
-                    
+
                     <form id="form" action="{{url('people/insert')}}" method="post">
                       @csrf
                         <div class="form-group">
-                          <label for="inputPropery">Property Name</label>
-                          {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
-                          <select style="width:100%;"   id="property" name="property" >
-                            <option></option>
-                          </select>
-                          {{-- <small id="propertyHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
+                          <label for="name">Name</label>
+                          <input type="text" class="form-control" id="name" name="name" placeholder="Name">
                         </div>
                         <div class="form-group">
-                          <label for="value">Value</label>
-                          <input type="text" class="form-control" id="value" name="value" placeholder="Value">
+                          <label for="father_name">Father Name</label>
+                          <input type="text" class="form-control" id="father_name" name="father_name" placeholder="Father Name">
                         </div>
+                        <div class="form-group">
+                          <label for="mother_name">Mother Name</label>
+                          <input type="text" class="form-control" id="mother_name" name="mother_name" placeholder="Mother Name">
+                        </div>
+                        <div class="form-group">
+                          <label for="photo">Photo</label>
+                          <input type="file" id="photo" name="photo" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="birth_certificate_number">Birth Certificate Number</label>
+                          <input type="text" class="form-control" id="birth_certificate_number" name="birth_certificate_number" placeholder="Birth Certificate Number">
+                        </div>
+                        <div class="form-group">
+                          <label for="nid">National identification number</label>
+                          <input type="text" class="form-control" id="nid" name="nid" placeholder="NID">
+                        </div>
+                        <div class="form-group">
+                          <label for="iris">IRIS</label>
+                          <input type="text" class="form-control" id="iris" name="iris" placeholder="IRIS">
+                        </div>
+                        <div class="form-group">
+                          <label for="dna">DNA</label>
+                          <input type="text" class="form-control" id="dna" name="dna" placeholder="DNA">
+                        </div>
+                        <div class="form-group">
+                          <label for="national_health_certificate_number">National Health certificate number</label>
+                          <input type="text" class="form-control" id="national_health_certificate_number" name="national_health_certificate_number" placeholder="National Health certificate number">
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -68,19 +93,32 @@ $(document).ready( function() {
     
     e.preventDefault();
 
-    let property = $('#property').val();
-    let value = $('#value').val();
-    
+    let name = $('#name').val();
+    let father_name = $('#father_name').val();
+    let mother_name = $('#mother_name').val();
+    let photo = $('#photo').val();
+    let nid = $('#nid').val();
+    let birth_certificate_number = $('#birth_certificate_number').val();
+    let iris = $('#iris').val();
+    let dna = $('#dna').val();
+    let national_health_certificate_number = $('#national_health_certificate_number').val();
+
     $.ajax({
       url: "/people/insert",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-        property:property,
-        value:value
+        name:name,
+        father_name:father_name,
+        mother_name:mother_name,
+        photo:photo,
+        nid:nid,
+        birth_certificate_number:birth_certificate_number,
+        iris:iris,
+        dna:dna,
+        national_health_certificate_number:national_health_certificate_number    
       },
       success:function(response){
-
         toastr.success(response.message);
       },
       error: function(response) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Components\Message;
+use App\Models\People;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -22,6 +23,22 @@ class PeopleController extends Controller
     }
 
     public function insert(Request $request){
+        $new_request = $request->except(['_token']);
+        $request_result = false;
+        foreach ($new_request as $value)
+            $request_result = $request_result || ($value != null);
+
+        if($request_result ){
+            People::create($new_request);
+            $this->apiSuccess();
+            return $this->apiOutput(Response::HTTP_OK, "New People added ...");    
+        }else{
+            return $this->apiOutput(Response::HTTP_OK, "Minimum one field is required ...");
+        }
+        
+    }
+
+    public function insert2(Request $request){
         if( ! Property::where('name',$request->property)->first() ){
             $property = new Property();
             $property->name = $request->property;
