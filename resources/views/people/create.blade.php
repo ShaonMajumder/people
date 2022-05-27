@@ -4,8 +4,8 @@
 <script>
 $(document).ready(function() {
   $("#property").select2({
-      tags: true,
-      tokenSeparators: [',', ' ']
+    tags: true,
+    tokenSeparators: [',', ' ']
   });
 });
 
@@ -31,12 +31,14 @@ $(document).ready(function() {
                         <div class="form-group">
                           <label for="inputPropery">Property Name</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
-                          <select style="width:100%;"   id="property" name="property" ></select>
+                          <select style="width:100%;"   id="property" name="property" >
+                            <option></option>
+                          </select>
                           {{-- <small id="propertyHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
                         </div>
                         <div class="form-group">
                           <label for="value">Value</label>
-                          <input type="password" class="form-control" id="value" name="value" placeholder="Password">
+                          <input type="text" class="form-control" id="value" name="value" placeholder="Password">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -56,8 +58,9 @@ $(document).ready( function() {
   $.getJSON("/people/listproperties",function(response){
     let data = response.data;
     data = JSON.parse(data); //convert to javascript array
-    values = '';
+    values = '<option selected disabled>Select a property</option>';
     $.each(data,function(key,value){
+      
       values+="<option value='"+value.id+"'>"+value.name+"</option>";
     });
     $("#property").html(values); 
