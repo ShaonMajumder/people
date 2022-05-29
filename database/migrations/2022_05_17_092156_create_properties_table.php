@@ -28,7 +28,10 @@ class CreatePropertiesTable extends Migration
      */
     public function down()
     {
-        $table->dropForeign('causer_id');
+        Schema::table('properties', function(Blueprint $table)
+        {
+            $table->dropForeign('causer_id');
+        });
         Schema::dropIfExists('properties');
     }
 }
