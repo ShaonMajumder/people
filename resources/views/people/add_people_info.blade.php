@@ -25,6 +25,8 @@ $(document).ready(function() {
                     
                     <form id="form" action="{{url('people/insert')}}" method="post">
                       @csrf
+                      <input type="hidden" name="people_id" id="people_id" value="{{$people->id}}">
+
                         <div class="form-group">
                           <label for="inputPropery">Property Name</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
@@ -52,36 +54,43 @@ $(document).ready( function() {
   	"progressBar" : true
   };
 
-  $.getJSON("/people/listproperties",function(response){
-    let data = response.data;
-    data = JSON.parse(data); //convert to javascript array
-    values = '<option selected disabled>Select a property</option>';
-    $.each(data,function(key,value){
-      
-      values+="<option value='"+value.id+"'>"+value.name+"</option>";
+  function listProperties(){
+    $.getJSON("/people/listproperties",function(response){
+      let data = response.data;
+      data = JSON.parse(data); //convert to javascript array
+      values = '<option selected disabled>Select a property</option>';
+      $.each(data,function(key,value){
+        
+        values+="<option value='"+value.id+"'>"+value.name+"</option>";
+      });
+      $("#property").html(values); 
     });
-    $("#property").html(values); 
-  });
+  }
+  listProperties();
+  
 
 
   $("#form").submit(function(e){
     
     e.preventDefault();
 
+    let people_id = $('#people_id').val();
     let property = $('#property').val();
+    alert( $('#property').val() );
     let value = $('#value').val();
     
     $.ajax({
-      url: "/people/insert",
+      url: "/people/addinfo",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
+        people_id:people_id,
         property:property,
         value:value
       },
       success:function(response){
-
         toastr.success(response.message);
+        listProperties();
       },
       error: function(response) {
         toastr.error(response.message);

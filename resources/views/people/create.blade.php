@@ -26,7 +26,7 @@ $(document).ready(function() {
                     <form id="form" action="{{url('people/insert')}}" method="post">
                       @csrf
                         <div class="form-group">
-                          <label for="name">Name</label>
+                          <label for="name">Full Name</label>
                           <input type="text" class="form-control" id="name" name="name" placeholder="Name">
                         </div>
                         <div class="form-group">
@@ -120,6 +120,8 @@ $(document).ready( function() {
       },
       success:function(response){
         toastr.success(response.message);
+        if(response.status)
+          $('#form')[0].reset();
       },
       error: function(response) {
         toastr.error(response.message);
