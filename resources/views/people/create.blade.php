@@ -119,7 +119,8 @@ $(document).ready( function() {
         national_health_certificate_number:national_health_certificate_number    
       },
       success:function(response){
-        toastr.success(response.message);
+        // toastr.success(response.message);
+        window.location.href = "{{ route('people.list','message=New People added ...') }}";
         if(response.status)
           $('#form')[0].reset();
       },

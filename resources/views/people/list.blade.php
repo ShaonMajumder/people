@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+
+
+      
+
 <script>
 $(document).ready(function() {
   $("#property").select2({
@@ -9,6 +13,21 @@ $(document).ready(function() {
   });
 });
 
+  toastr.options =
+  {
+  	"closeButton" : true,
+  	"progressBar" : true
+  };
+
+</script>
+
+<script>
+  $(document).ready(function() {
+    @if( request()->get('message') )
+      toastr.success("{{ request()->get('message') }}");
+    @endif
+  });
+  
 </script>
 <div class="container">
     <div class="row justify-content-center">
@@ -17,7 +36,9 @@ $(document).ready(function() {
                 <div class="card-header">{{ __('Dashboard') }}</div>
 
                 <div class="card-body">
-                  <div class="container mt-5">
+                  <div class="container mt-5" style="overflow-x: auto;">
+                    <a href="{{ url("people/new") }}">Add New People</a>
+
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -54,11 +75,7 @@ $(document).ready(function() {
 </div>
 <script type="text/javascript">
 $(document).ready( function() {
-  toastr.options =
-  {
-  	"closeButton" : true,
-  	"progressBar" : true
-  };
+  
 
   $.getJSON("/people/listproperties",function(response){
     let data = response.data;

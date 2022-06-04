@@ -25,15 +25,19 @@ class PeopleController extends Controller
         return view('people.create');
     }
 
-    public function listPeople(){
+    public function listPeople($message=null){
         $columns=[];
         $query = "SHOW COLUMNS FROM people";
         $results = DB::select($query);
         foreach($results as $result)
             array_push($columns,$result->Field);
         $peoples = People::latest()->paginate(10);
-
-        return view('people.list',compact('peoples','columns'));
+        
+        if($message){
+            return view('people.list',compact('peoples','columns'))->with('message','New People added ...');
+        }else{
+            return view('people.list',compact('peoples','columns'));
+        }
     }
 
     public function showAddPeopleInformationForm(People $people){
@@ -50,8 +54,9 @@ class PeopleController extends Controller
 
         if($request_result ){
             People::create($new_request);
-            $this->apiSuccess();
-            return $this->apiOutput(Response::HTTP_OK, "New People added ...");    
+            // $this->apiSuccess();
+            // return $this->apiOutput(Response::HTTP_OK, "New People added ...");  
+            return $this->listPeople('New People added ...');
         }else{
             return $this->apiOutput(Response::HTTP_OK, "Minimum one field is required ...");
         }
