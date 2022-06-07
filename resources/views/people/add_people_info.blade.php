@@ -23,6 +23,11 @@ $(document).ready(function() {
                         </div>
                     @endif
                     
+                    <h2>{{ $people->name }}</h2>
+                    @foreach( $values as $value)
+                        {{ $value['property_name'] . ' - ' . $value['value']  }} <br>
+                    @endforeach
+                    
                     <form id="form" action="{{url('people/insert')}}" method="post">
                       @csrf
                       <input type="hidden" name="people_id" id="people_id" value="{{$people->id}}">

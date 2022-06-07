@@ -41,9 +41,21 @@ class PeopleController extends Controller
     }
 
     public function showAddPeopleInformationForm(People $people){
-        // dd($people);
-        return view('people.add_people_info',compact('people'));
+        // $properties = Property::
+        // $people->values
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name',)
+                        ->get()
+                        ->toArray();
+        // dd($values);
+        // $property_ids = array_column($values, 'property_id');
+
+                        
+                            
         
+        return view('people.add_people_info',compact('people','values'));
     }
 
     public function insert(Request $request){
