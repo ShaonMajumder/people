@@ -15,6 +15,9 @@ class CreateValuesTable extends Migration
     {
         Schema::create('values', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('people_id')->constrained('people');
+            $table->foreignId('property_id')->constrained('properties');
+            $table->text('value');
             $table->timestamps();
         });
     }

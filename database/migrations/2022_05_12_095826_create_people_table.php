@@ -15,6 +15,15 @@ class CreatePeopleTable extends Migration
     {
         Schema::create('people', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->string('father_name')->nullable();
+            $table->string('mother_name')->nullable();
+            $table->string('photo')->nullable();
+            $table->string('nid')->nullable();
+            $table->string('birth_certificate_number')->nullable();
+            $table->string('iris')->nullable();
+            $table->string('dna')->nullable();
+            $table->string('national_health_certificate_number')->nullable();
             $table->timestamps();
         });
     }
