@@ -25,6 +25,7 @@ $(document).ready(function() {
   $(document).ready(function() {
     @if( request()->get('message') )
       toastr.success("{{ request()->get('message') }}");
+      // {{ request()->fullUrlWithQuery(['message' => null]) }}
     @endif
   });
   
@@ -55,12 +56,17 @@ $(document).ready(function() {
                         <tbody>
                             @foreach($peoples as $people)
                                 <tr>
-                                  <td><a href="/people/{{$people->id}}/add"><i class="fa-solid fa-plus"></i></a></td>
+                                  <td>
+                                    <a href="/people/{{$people->id}}/add"><i class="fa-solid fa-plus"></i></a>
+                                    <a href="/people/{{$people->id}}/delete/"><i class="fa-solid fa-trash"></i></a>
+                                  </td>
                                   @foreach ($people->toArray() as $key => $item)
                                     
-                                    @if($key == 'photo')
+                                    @if($item and $key == 'photo')
                                       <td><img height="40" src="{{asset('photos/'.$item) }}" alt="" title=""></td>
-                                      
+                                    @elseif($people->reference and $key == 'reference_type')
+                                      {{-- @dd($people->reference->name) --}}
+                                      <td><a href="{{$people->reference->id}}/add">{{ $people->reference->name }}</a></td>
                                     @else
                                       <td>{{ $item }}</td>
                                     @endif

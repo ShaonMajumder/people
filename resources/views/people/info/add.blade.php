@@ -24,7 +24,10 @@ $(document).ready(function() {
                     @endif
                     
                     <h2>{{ $people->name }}</h2>
-                    <a href="{{ route('people.add') }}?reference={{ $people->id }}">Add Relative</a> </br>
+                    <img height="100" src="{{asset('photos/'.$people->photo) }}" alt="" title="">
+                    </br>
+                    <a href="{{ route('people.add') }}?reference={{ $people->id }}">Add Relative</a> 
+                    </br>
                     @foreach( $values as $value)
                       <a href="edit/{{ $value['value_id'] }}"><i class="fas fa-edit"></i> </a>
                       <a href="delete/{{ $value['value_id'] }}"><i class="fas fa-trash"></i> </a>
