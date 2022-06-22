@@ -99,7 +99,6 @@ class PeopleController extends Controller
 
     public function insert(Request $request){
         if( isset($request->reference_type) and ! is_numeric($request->reference_type)  ){ // and ! Property::where('name',$request->property)->first()
-            
             $human_relation = new HumanRelation();
             $human_relation->name = $request->reference_type;
             $human_relation->causer_id = Auth::user()->id;
@@ -136,7 +135,10 @@ class PeopleController extends Controller
             
         
             
-            People::create($new_request);
+            $people = People::create($new_request);
+            $timeline->target_id = $people->id;
+            $timeline->save();
+            
             // $this->apiSuccess();
             // return $this->apiOutput(Response::HTTP_OK, "New People added ...");  
             return $this->listPeople('New People added ...');
