@@ -7,6 +7,10 @@ $(document).ready(function() {
     tags: true,
     tokenSeparators: [',', ' ']
   });
+  $("#reference_type").select2({
+    tags: true,
+    tokenSeparators: [',', ' ']
+  });
 });
 
 </script>
@@ -29,6 +33,36 @@ $(document).ready(function() {
                           <label for="name">Full Name</label>
                           <input type="text" class="form-control" id="name" name="name" placeholder="Name">
                         </div>
+
+                        @isset($reference)
+                          
+                          <div class="form-group">
+                            <label for="reference_type">Relative / Reference Type</label>
+                            <select style="width:100%;" id="reference_type" name="reference_type" > </select>
+                            of <label>Relative / Reference - {{ $reference->name }}</label>
+                          </div>
+                          <div class="form-group">
+                            
+                            <input type="hidden" id="reference_id" name="reference_id" value="{{ $reference->id }}">
+                          </div>
+                          <script>
+                            $(document).ready(function() {
+                              function listHumanRelations(){
+                                $.getJSON("/people/list-human-relations",function(response){
+                                  let data = response.data;
+                                  data = JSON.parse(data); //convert to javascript array
+                                  values = '<option selected disabled>Select a property</option>';
+                                  $.each(data,function(key,value){
+                                    values+="<option value='"+value.id+"'>"+value.name+"</option>";
+                                  });
+                                  $("#reference_type").html(values); 
+                                });
+                              }
+                              listHumanRelations();
+                            });
+                          </script>
+                        @endisset
+
                         <div class="form-group">
                           <label for="connected_form">Connected From</label>
                           <select style="width:100%;" id="connected_from" name="connected_from" >
@@ -113,10 +147,25 @@ $(document).ready( function() {
     let dna = $('#dna').val();
     let national_health_certificate_number = $('#national_health_certificate_number').val();
 
-    $.ajax({
-      url: "/people/insert",
-      type:"POST",
-      data:{
+    let data_ = {};
+    if ($('#reference_type').length > 0) {
+      data_ = {
+        "_token": "{{ csrf_token() }}",
+        name:name,
+        reference_id:$('#reference_id').val(),
+        reference_type:$('#reference_type').val(),
+        connected_from:connected_from,
+        father_name:father_name,
+        mother_name:mother_name,
+        photo:photo,
+        nid:nid,
+        birth_certificate_number:birth_certificate_number,
+        iris:iris,
+        dna:dna,
+        national_health_certificate_number:national_health_certificate_number    
+      };
+    }else{
+      data_ = {
         "_token": "{{ csrf_token() }}",
         name:name,
         connected_from:connected_from,
@@ -128,7 +177,13 @@ $(document).ready( function() {
         iris:iris,
         dna:dna,
         national_health_certificate_number:national_health_certificate_number    
-      },
+      };
+    }
+
+    $.ajax({
+      url: "/people/insert",
+      type:"POST",
+      data:data_,
       success:function(response){
         // toastr.success(response.message);
         window.location.href = "{{ route('people.list','message=New People added ...') }}";

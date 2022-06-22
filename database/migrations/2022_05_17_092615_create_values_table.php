@@ -18,6 +18,8 @@ class CreateValuesTable extends Migration
             $table->foreignId('people_id')->constrained('people');
             $table->foreignId('property_id')->constrained('properties');
             $table->text('value');
+            $table->text('question_asked')->nullable();
+            $table->text('information_source')->nullable();
             $table->timestamps();
         });
     }

@@ -16,6 +16,8 @@ class CreatePeopleTable extends Migration
         Schema::create('people', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->foreignId('reference_id')->nullable()->references('id')->on('users')->cascadeOnDelete();
+            $table->foreignId('reference_type')->nullable()->references('id')->on('human_relations')->cascadeOnDelete();
             $table->string('connected_from')->nullable();
             $table->string('father_name')->nullable();
             $table->string('mother_name')->nullable();

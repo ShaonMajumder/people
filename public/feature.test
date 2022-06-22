@@ -1,5 +1,7 @@
 ...0. Edit existing property value
 Status db design
+People value update, delete
+People add reference people
 
 
 when Accepted request, automatically, set status and show status "waiting-for-receiving-hi"

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Components\Message;
+use App\Models\HumanRelation;
 use App\Models\InteractionStatus;
 use App\Models\InteractionTimeline;
 use App\Models\People;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Schema;
 
 class PeopleController extends Controller
@@ -23,8 +25,42 @@ class PeopleController extends Controller
         $this->middleware('auth');
     }
 
-    public function create(){
-        return view('people.create');
+    public function listHumanRelations(){
+        $human_relations = HumanRelation::get();
+        $this->data = $human_relations->toJson();
+        $this->apiSuccess();
+        return $this->apiOutput(Response::HTTP_OK, "All relations listed ..."); 
+    }
+    public function create(Request $request){
+        if($request->input('reference')){
+            $reference = People::find($request->input('reference'));
+            return view('people.create',compact('reference'));
+        }else{
+            return view('people.create');
+        }
+    }
+
+    public function deletePeoplePropertyValue(Request $request,People $people,Value $value){
+        $value->delete();
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
+                        ->get()
+                        ->toArray();
+        return Redirect::route('people.info',array('people' => $people,'values' => $values))->with('message','Successfully deleted ...');
+    }
+
+    public function updatePeoplePropertyValue(Request $request,People $people,Value $value){
+        $new_request = $request->except(['_token']);
+        $value->update($new_request);
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
+                        ->get()
+                        ->toArray();
+        return Redirect::route('people.info',array('people' => $people,'values' => $values))->with('message','Successfully updated ...');
     }
 
     public function listPeople($message=null){
@@ -41,23 +77,37 @@ class PeopleController extends Controller
             return view('people.list',compact('peoples','columns'));
         }
     }
+    
+    public function showEditPeopleInformationForm(People $people, Value $value, $message=''){
+        return view('people.info.edit',compact('people','value'))->with('message',$message);
+    }
 
-    public function showAddPeopleInformationForm(People $people){
+    public function showAddPeopleInformationForm(People $people,$message=''){
         // $properties = Property::
         // $people->values
         $values = People::join('values', 'values.people_id', '=', 'people.id')
                         ->join('properties', 'properties.id', '=', 'values.property_id')
                         // ->select('property_id')
-                        ->select('*','people.name as name','properties.name as property_name',)
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
                         ->get()
                         ->toArray();
         // dd($values);
         // $property_ids = array_column($values, 'property_id');
         
-        return view('people.add_people_info',compact('people','values'));
+        return view('people.info.add',compact('people','values'))->with('message',$message);
     }
 
     public function insert(Request $request){
+        if( isset($request->reference_type) and ! is_numeric($request->reference_type)  ){ // and ! Property::where('name',$request->property)->first()
+            
+            $human_relation = new HumanRelation();
+            $human_relation->name = $request->reference_type;
+            $human_relation->causer_id = Auth::user()->id;
+            $human_relation->save();
+            $text = "New relation '$human_relation->name' added";
+            $request->merge(['reference_type' => $human_relation->id]);
+        }
+
         $new_request = $request->except(['_token']);
         $request_result = false;
         foreach ($new_request as $value)
@@ -101,7 +151,8 @@ class PeopleController extends Controller
         // dd($request->all());
         $text = null;
         $property_id = null;
-        if( ! is_numeric($request->property) and ! Property::where('name',$request->property)->first() ){
+        if( ! is_numeric($request->property)  ){ // and ! Property::where('name',$request->property)->first()
+            
             $property = new Property();
             $property->name = $request->property;
             $property->causer_id = Auth::user()->id;
@@ -123,6 +174,8 @@ class PeopleController extends Controller
         
         $this->apiSuccess();
         return $this->apiOutput(Response::HTTP_OK, $text);
+        // $people = People::find($request->people_id)->first();
+        // return $this->showAddPeopleInformationForm($people);
         
     }
 
