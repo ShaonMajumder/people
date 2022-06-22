@@ -14,4 +14,8 @@ class People extends Model
     public function values(){
         return $this->hasMany(Value::class);
     }
+
+    public function reference(){
+        return $this->belongsTo(People::class);
+    }
 }

@@ -27,6 +27,11 @@ class PeopleController extends Controller
         $this->middleware('auth');
     }
 
+    public function deletePeople(Request $request, People $people){
+        $people->delete();
+        return Redirect::route('people.list',array('message' => 'Successfully deleted ...'));
+    }
+
     public function listHumanRelations(){
         $human_relations = HumanRelation::get();
         $this->data = $human_relations->toJson();
@@ -65,7 +70,7 @@ class PeopleController extends Controller
         return Redirect::route('people.info',array('people' => $people,'values' => $values))->with('message','Successfully updated ...');
     }
 
-    public function listPeople($message=null){
+    public function listPeople($message=null,$redirect=false){
         $columns=[];
         $query = "SHOW COLUMNS FROM people";
         $results = DB::select($query);
@@ -78,6 +83,8 @@ class PeopleController extends Controller
         }else{
             return view('people.list',compact('peoples','columns'));
         }
+        if($redirect)
+            return Redirect::route('people.list',array('peoples' => $peoples,'columns' => $columns))->with('message','Successfully deleted ...');
     }
     
     public function showEditPeopleInformationForm(People $people, Value $value, $message=''){
