@@ -1,0 +1,13 @@
+...0. Edit existing property value
+Status db design
+
+
+when Accepted request, automatically, set status and show status "waiting-for-receiving-hi"
+You can Disable if you don't want to receive hi from the person or doesn't expect
+When got a event-trigger show response status
+
+
+if waiting-for-received-h
+
+suddenly met if previously no meet proposal given
+any action before previous action is considerred sudden
