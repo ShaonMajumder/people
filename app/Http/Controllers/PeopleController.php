@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Components\Message;
+use App\Models\InteractionStatus;
+use App\Models\InteractionTimeline;
 use App\Models\People;
 use App\Models\Property;
 use App\Models\Value;
@@ -51,9 +53,6 @@ class PeopleController extends Controller
                         ->toArray();
         // dd($values);
         // $property_ids = array_column($values, 'property_id');
-
-                        
-                            
         
         return view('people.add_people_info',compact('people','values'));
     }
@@ -65,6 +64,28 @@ class PeopleController extends Controller
             $request_result = $request_result || ($value != null);
 
         if($request_result ){
+            
+            if( $request->connected_from == 'facebook'){
+                
+                $timeline = new InteractionTimeline();
+                $timeline->causer_id = Auth::user()->id;
+                $timeline->interaction_status_id = InteractionStatus::$STATUS_DISCOVERED_VIA_SOCIAL_ID;
+                $timeline->occurance_type = 'random';
+                $timeline->is_active = false;
+                $timeline->save();
+            }
+
+            $timeline = new InteractionTimeline();
+            $timeline->causer_id = Auth::user()->id;
+            $timeline->interaction_status_id = InteractionStatus::$STATUS_INSERTED_IN_SYSTEM;
+            $timeline->occurance_type = 'planned';
+            $timeline->is_active = true;
+            $timeline->save();
+
+            
+            
+        
+            
             People::create($new_request);
             // $this->apiSuccess();
             // return $this->apiOutput(Response::HTTP_OK, "New People added ...");  
@@ -95,6 +116,8 @@ class PeopleController extends Controller
         $value->property_id = $property_id ?? $request->property;
         $value->value = $request->value;
         $value->save();
+
+        
 
         $text = $text ? $text." and data added ..." : "Data added ...";
         

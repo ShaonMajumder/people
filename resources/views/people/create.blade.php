@@ -3,7 +3,7 @@
 @section('content')
 <script>
 $(document).ready(function() {
-  $("#property").select2({
+  $("#connected_from").select2({
     tags: true,
     tokenSeparators: [',', ' ']
   });
@@ -29,6 +29,15 @@ $(document).ready(function() {
                           <label for="name">Full Name</label>
                           <input type="text" class="form-control" id="name" name="name" placeholder="Name">
                         </div>
+                        <div class="form-group">
+                          <label for="connected_form">Connected From</label>
+                          <select style="width:100%;" id="connected_from" name="connected_from" >
+                            <option selected disabled>Select</option>
+                            <option value="facebook">Facebook</option>
+                          </select>
+                        </div>
+
+
                         <div class="form-group">
                           <label for="father_name">Father Name</label>
                           <input type="text" class="form-control" id="father_name" name="father_name" placeholder="Father Name">
@@ -94,6 +103,7 @@ $(document).ready( function() {
     e.preventDefault();
 
     let name = $('#name').val();
+    let connected_from = $('#connected_from').val();
     let father_name = $('#father_name').val();
     let mother_name = $('#mother_name').val();
     let photo = $('#photo').val();
@@ -109,6 +119,7 @@ $(document).ready( function() {
       data:{
         "_token": "{{ csrf_token() }}",
         name:name,
+        connected_from:connected_from,
         father_name:father_name,
         mother_name:mother_name,
         photo:photo,
