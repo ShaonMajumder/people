@@ -2,6 +2,7 @@
 Status db design
 People value update, delete
 People add reference people
+Human relationship added
 
 
 when Accepted request, automatically, set status and show status "waiting-for-receiving-hi"
