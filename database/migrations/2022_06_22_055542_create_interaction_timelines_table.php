@@ -16,6 +16,7 @@ class CreateInteractionTimelinesTable extends Migration
         Schema::create('interaction_timelines', function (Blueprint $table) {
             $table->id();
             $table->foreignId('interaction_status_id')->references('id')->on('interaction_statuses')->cascadeOnDelete();
+            $table->foreignId('target_id')->nullable()->references('id')->on('people')->cascadeOnDelete();
             $table->foreignId('causer_id')->references('id')->on('users')->cascadeOnDelete();
             $table->string('occurance_type')->nullable(); // sudden, planned
             $table->boolean('is_active');
