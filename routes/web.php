@@ -24,9 +24,11 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::prefix('people')->group(function(){
     Route::get('list', [PeopleController::class, 'listPeople'])->name('people.list');
     Route::get('new', [PeopleController::class, 'create'])->name('people.add');
+    Route::post('insert', [PeopleController::class, 'insert']);
+    
     Route::get('list-human-relations', [PeopleController::class, 'listHumanRelations']);
     
-    Route::post('insert', [PeopleController::class, 'insert']);
+    
     // Route::get('{people}', [PeopleController::class, 'showAddPeopleInformationForm']);
     Route::get('{people}/add', [PeopleController::class, 'showAddPeopleInformationForm'])->name('people.info');
     Route::get('{people}/edit/{value}', [PeopleController::class, 'showEditPeopleInformationForm']);

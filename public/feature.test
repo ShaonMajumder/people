@@ -1,8 +1,12 @@
-...0. Edit existing property value
-Status db design
+Done
 People value update, delete
 People add reference people
 Human relationship added
+Edit existing property value
+Image upload and public symlink view
+
+Status db design
+
 
 
 when Accepted request, automatically, set status and show status "waiting-for-receiving-hi"

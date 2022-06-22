@@ -56,8 +56,14 @@ $(document).ready(function() {
                             @foreach($peoples as $people)
                                 <tr>
                                   <td><a href="/people/{{$people->id}}/add"><i class="fa-solid fa-plus"></i></a></td>
-                                  @foreach ($people->toArray() as $item)
-                                    <td>{{ $item }}</td>    
+                                  @foreach ($people->toArray() as $key => $item)
+                                    
+                                    @if($key == 'photo')
+                                      <td><img height="40" src="{{asset('photos/'.$item) }}" alt="" title=""></td>
+                                      
+                                    @else
+                                      <td>{{ $item }}</td>
+                                    @endif
                                   @endforeach
                                 </tr>
                             @endforeach

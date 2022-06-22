@@ -71,6 +71,10 @@ $(document).ready(function() {
                           </select>
                         </div>
 
+                        <div class="form-group">
+                          <label for="photo">Photo</label>
+                          <input type="file" id="photo" name="photo" class="form-control" multiple>
+                        </div>
 
                         <div class="form-group">
                           <label for="father_name">Father Name</label>
@@ -80,10 +84,7 @@ $(document).ready(function() {
                           <label for="mother_name">Mother Name</label>
                           <input type="text" class="form-control" id="mother_name" name="mother_name" placeholder="Mother Name">
                         </div>
-                        <div class="form-group">
-                          <label for="photo">Photo</label>
-                          <input type="file" id="photo" name="photo" class="form-control">
-                        </div>
+                        
                         <div class="form-group">
                           <label for="birth_certificate_number">Birth Certificate Number</label>
                           <input type="text" class="form-control" id="birth_certificate_number" name="birth_certificate_number" placeholder="Birth Certificate Number">
@@ -136,54 +137,30 @@ $(document).ready( function() {
     
     e.preventDefault();
 
-    let name = $('#name').val();
-    let connected_from = $('#connected_from').val();
-    let father_name = $('#father_name').val();
-    let mother_name = $('#mother_name').val();
-    let photo = $('#photo').val();
-    let nid = $('#nid').val();
-    let birth_certificate_number = $('#birth_certificate_number').val();
-    let iris = $('#iris').val();
-    let dna = $('#dna').val();
-    let national_health_certificate_number = $('#national_health_certificate_number').val();
-
-    let data_ = {};
+    var formData = new FormData();
+    formData.append("_token", "{{ csrf_token() }}");
+    formData.append('name', $('#name').val());
+    formData.append('connected_from', $('#connected_from').val());
+    formData.append('photo', $('#photo')[0].files[0]);
+    formData.append('father_name', $('#father_name').val());
+    formData.append('mother_name', $('#mother_name').val());
+    formData.append('nid', $('#nid').val());
+    formData.append('birth_certificate_number', $('#birth_certificate_number').val());
+    formData.append('iris', $('#iris').val());
+    formData.append('dna', $('#dna').val());
+    formData.append('national_health_certificate_number', $('#national_health_certificate_number').val());
+    
     if ($('#reference_type').length > 0) {
-      data_ = {
-        "_token": "{{ csrf_token() }}",
-        name:name,
-        reference_id:$('#reference_id').val(),
-        reference_type:$('#reference_type').val(),
-        connected_from:connected_from,
-        father_name:father_name,
-        mother_name:mother_name,
-        photo:photo,
-        nid:nid,
-        birth_certificate_number:birth_certificate_number,
-        iris:iris,
-        dna:dna,
-        national_health_certificate_number:national_health_certificate_number    
-      };
-    }else{
-      data_ = {
-        "_token": "{{ csrf_token() }}",
-        name:name,
-        connected_from:connected_from,
-        father_name:father_name,
-        mother_name:mother_name,
-        photo:photo,
-        nid:nid,
-        birth_certificate_number:birth_certificate_number,
-        iris:iris,
-        dna:dna,
-        national_health_certificate_number:national_health_certificate_number    
-      };
+      formData.append('reference_id', $('#reference_id').val());
+      formData.append('reference_type', $('#reference_type').val());
     }
 
     $.ajax({
       url: "/people/insert",
       type:"POST",
-      data:data_,
+      data: formData,
+      processData: false,  // tell jQuery not to process the data
+      contentType: false,  // tell jQuery not to set contentType
       success:function(response){
         // toastr.success(response.message);
         window.location.href = "{{ route('people.list','message=New People added ...') }}";

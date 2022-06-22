@@ -13,8 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class PeopleController extends Controller
 {
@@ -98,6 +100,18 @@ class PeopleController extends Controller
     }
 
     public function insert(Request $request){
+        if($request->hasFile('photo')){
+            $request->validate([
+                'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5048',
+            ]);
+            $imageName = time().'.'.$request->photo->extension();  
+            // $request->photo->move(public_path('photo'), $imageName);
+            Storage::disk('photos')->put( $imageName, File::get($request->photo));
+            
+        }else{
+            $request->request->remove('photo');
+        }
+
         if( isset($request->reference_type) and ! is_numeric($request->reference_type)  ){ // and ! Property::where('name',$request->property)->first()
             $human_relation = new HumanRelation();
             $human_relation->name = $request->reference_type;
@@ -107,7 +121,9 @@ class PeopleController extends Controller
             $request->merge(['reference_type' => $human_relation->id]);
         }
 
-        $new_request = $request->except(['_token']);
+        $new_request = $request->except(['_token','photo']);
+        if(isset($imageName)) $new_request['photo'] = $imageName;
+        
         $request_result = false;
         foreach ($new_request as $value)
             $request_result = $request_result || ($value != null);
@@ -132,9 +148,7 @@ class PeopleController extends Controller
             $timeline->save();
 
             
-            
-        
-            
+
             $people = People::create($new_request);
             $timeline->target_id = $people->id;
             $timeline->save();
