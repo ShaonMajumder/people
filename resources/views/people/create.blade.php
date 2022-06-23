@@ -27,7 +27,7 @@ $(document).ready(function() {
                         </div>
                     @endif
 
-                    <form id="form" action="{{url('people/insert')}}" method="post">
+                    <form id="form" action="{{ route('people.store') }}" method="post">
                       @csrf
                         <div class="form-group">
                           <label for="name">Full Name</label>
@@ -35,7 +35,7 @@ $(document).ready(function() {
                         </div>
 
                         @isset($reference)
-                          
+                          {{-- @dd($reference) --}}
                           <div class="form-group">
                             <label for="reference_type">Relative / Reference Type</label>
                             <select style="width:100%;" id="reference_type" name="reference_type" > </select>
@@ -156,14 +156,14 @@ $(document).ready( function() {
     }
 
     $.ajax({
-      url: "/people/insert",
+      url: "{{ route('people.store') }}",
       type:"POST",
       data: formData,
       processData: false,  // tell jQuery not to process the data
       contentType: false,  // tell jQuery not to set contentType
       success:function(response){
         // toastr.success(response.message);
-        window.location.href = "{{ route('people.list','message=New People added ...') }}";
+        window.location.href = "{{ route('people.index','message=New People added ...') }}";
         if(response.status)
           $('#form')[0].reset();
       },

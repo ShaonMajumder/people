@@ -14,8 +14,8 @@
                         </div>
                     @endif
                     <ul>
-                        <li> <a href="{{ url('/people/new') }}">New People</a> </li>
-                        <li> <a href="{{ url('/people/list') }}">List People</a> </li>
+                        <li> <a href="{{ url('/people/create') }}">New People</a> </li>
+                        <li> <a href="{{ url('/people') }}">List People</a> </li>
                     </ul>
                     
                     {{ __('You are logged in!') }}

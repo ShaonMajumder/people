@@ -10,23 +10,51 @@ use App\Models\People;
 use App\Models\Property;
 use App\Models\Value;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Response;
 
-class PeopleController extends Controller
+class PeopleControllerBackup extends Controller
 {
     use Message;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index($message=null,$redirect=false){
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    //
+    public function destroy(Request $request, People $people){
+        $people->delete();
+        return Redirect::route('people.list',array('message' => 'Successfully deleted ...'));
+    }
+
+    //
+    public function listHumanRelations(){
+        $human_relations = HumanRelation::get();
+        $this->data = $human_relations->toJson();
+        $this->apiSuccess();
+        return $this->apiOutput(Response::HTTP_OK, "All relations listed ..."); 
+    }
+
+    //create
+    public function create(Request $request){
+        if($request->input('reference')){
+            $reference = People::find($request->input('reference'));
+            return view('people.create',compact('reference'));
+        }else{
+            return view('people.create');
+        }
+    }
+
+
+
+    // index
+    public function listPeople($message=null,$redirect=false){
         $columns=[];
         $query = "SHOW COLUMNS FROM people";
         $results = DB::select($query);
@@ -40,31 +68,52 @@ class PeopleController extends Controller
             return view('people.list',compact('peoples','columns'));
         }
         if($redirect)
-            return Redirect::route('people.index',array('peoples' => $peoples,'columns' => $columns))->with('message','Successfully deleted ...');
+            return Redirect::route('people.list',array('peoples' => $peoples,'columns' => $columns))->with('message','Successfully deleted ...');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request){
-        if($request->input('reference')){
-            $reference = People::find($request->input('reference'));
-            return view('people.create',compact('reference'));
-        }else{
-            return view('people.create');
-        }
+    //
+    public function deletePeoplePropertyValue(Request $request,People $people,Value $value){
+        $value->delete();
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
+                        ->get()
+                        ->toArray();
+        return Redirect::route('people.info',array('people' => $people,'values' => $values))->with('message','Successfully deleted ...');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request){
+    public function updatePeoplePropertyValue(Request $request,People $people,Value $value){
+        $new_request = $request->except(['_token']);
+        $value->update($new_request);
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
+                        ->get()
+                        ->toArray();
+        return Redirect::route('people.info',array('people' => $people,'values' => $values))->with('message','Successfully updated ...');
+    }
+    
+    
+    // show
+    public function show(People $people,$message=''){
+        // $properties = Property::
+        // $people->values
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
+                        ->get()
+                        ->toArray();
+        // dd($values);
+        // $property_ids = array_column($values, 'property_id');
         
+        return view('people.info.add',compact('people','values'))->with('message',$message);
+    }
+
+    //
+    public function insert(Request $request){
         if($request->hasFile('photo')){
             $request->validate([
                 'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5048',
@@ -84,7 +133,6 @@ class PeopleController extends Controller
             $human_relation->save();
             $text = "New relation '$human_relation->name' added";
             $request->merge(['reference_type' => $human_relation->id]);
-            $request->merge(['reference_id' => (int) $request->reference_id]);
         }
 
         $new_request = $request->except(['_token','photo']);
@@ -119,73 +167,16 @@ class PeopleController extends Controller
             $timeline->target_id = $people->id;
             $timeline->save();
             
-            
-            // return $this->listPeople('New People added ...');
-            return Redirect::route('people.index',array('message' => 'New People added ...'));
+            // $this->apiSuccess();
+            // return $this->apiOutput(Response::HTTP_OK, "New People added ...");  
+            return $this->listPeople('New People added ...');
         }else{
             return $this->apiOutput(Response::HTTP_OK, "Minimum one field is required ...");
         }
         
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id,$message=''){
-        $people = People::findOrFail($id);
-        // $properties = Property::
-        // $people->values
-        $values = People::join('values', 'values.people_id', '=', 'people.id')
-                        ->join('properties', 'properties.id', '=', 'values.property_id')
-                        // ->select('property_id')
-                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
-                        ->get()
-                        ->toArray();
-        // dd($values);
-        // $property_ids = array_column($values, 'property_id');
-        
-        return view('people.info.add',compact('people','values'))->with('message',$message);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id, $message=''){ //People $people, Value $value,
-        $people = People::findOrFail($id);
-        return view('people.info.edit',compact('people'))->with('message',$message);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $people = People::findOrFail($id);
-        $people->delete();
-        return Redirect::route('people.index',array('message' => 'Successfully deleted ...'));
-    }
-
+    //
     public function listProperties(){
         $properties = Property::get();
         $this->data = $properties->toJson();
@@ -193,11 +184,8 @@ class PeopleController extends Controller
         return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
     }
 
-    public function listHumanRelations(){
-        $human_relations = HumanRelation::get();
-        $this->data = $human_relations->toJson();
-        $this->apiSuccess();
-        return $this->apiOutput(Response::HTTP_OK, "All relations listed ..."); 
+    public function showEditPeopleInformationForm(People $people, Value $value, $message=''){
+        return view('people.info.edit',compact('people','value'))->with('message',$message);
     }
 
     public function addInfo(Request $request){
@@ -233,18 +221,5 @@ class PeopleController extends Controller
         
     }
 
-    public function deletePeoplePropertyValue(Request $request,People $people,Value $value){
-        $value->delete();
-        $values = People::join('values', 'values.people_id', '=', 'people.id')
-                        ->join('properties', 'properties.id', '=', 'values.property_id')
-                        // ->select('property_id')
-                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
-                        ->get()
-                        ->toArray();
-        return Redirect::route('people.show', [$people->id])->with('message','Successfully deleted ...');
-    }
-
-    public function showEditPeopleInformationForm(People $people, Value $value, $message=''){
-        return view('people.info.edit',compact('people','value'))->with('message',$message);
-    }
+    
 }

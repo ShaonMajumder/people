@@ -29,7 +29,12 @@ $(document).ready(function() {
     @endif
   });
   
+  $(document).on("click" , ".people-delete", function() {
+    $(this).parent().submit();
+  });
+  
 </script>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -38,7 +43,7 @@ $(document).ready(function() {
 
                 <div class="card-body">
                   <div class="container mt-5" style="overflow-x: auto;">
-                    <a href="{{ url("people/new") }}">Add New People</a>
+                    <a href="{{ url("people/create") }}">Add New People</a>
 
                     <table class="table table-striped">
                         <thead>
@@ -57,8 +62,14 @@ $(document).ready(function() {
                             @foreach($peoples as $people)
                                 <tr>
                                   <td>
-                                    <a href="/people/{{$people->id}}/add"><i class="fa-solid fa-plus"></i></a>
-                                    <a href="/people/{{$people->id}}/delete/"><i class="fa-solid fa-trash"></i></a>
+                                    <a href="/people/{{$people->id}}"><i class="fa-solid fa-plus"></i></a>
+                                    <form method="post" action="{{ route('people.destroy', $people->id)}}"> 
+                                      @csrf
+                                      @method('DELETE')
+                                      <i class="people-delete fa-solid fa-trash"></i></i>
+                                    </form>
+                                    
+                                   
                                   </td>
                                   @foreach ($people->toArray() as $key => $item)
                                     
@@ -66,7 +77,7 @@ $(document).ready(function() {
                                       <td><img height="40" src="{{asset('photos/'.$item) }}" alt="" title=""></td>
                                     @elseif($people->reference and $key == 'reference_type')
                                       {{-- @dd($people->reference->name) --}}
-                                      <td><a href="{{$people->reference->id}}/add">{{ $people->reference->name }}</a></td>
+                                      <td><a href="{{$people->reference->id}}">{{ $people->reference->name }}</a></td>
                                     @else
                                       <td>{{ $item }}</td>
                                     @endif

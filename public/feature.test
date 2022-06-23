@@ -1,17 +1,3 @@
-Optimize Image before serving
-
-Done
-People value update, delete
-People add reference people
-Human relationship added
-Edit existing property value
-Image upload and public symlink view
-Delete People
-
-Status db design
-
-
-
 when Accepted request, automatically, set status and show status "waiting-for-receiving-hi"
 You can Disable if you don't want to receive hi from the person or doesn't expect
 When got a event-trigger show response status

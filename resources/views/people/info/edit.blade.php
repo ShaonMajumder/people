@@ -27,34 +27,6 @@
                     <h2>{{ $people->name }}</h2>
                     
                     
-                    <form id="form" action="{{ url('/people/'. $people->id .'/update/'. $value->id ) }}" method="post">
-                      @csrf
-                      <input type="hidden" name="people_id" id="people_id" value="{{$people->id}}">
-                      <input type="hidden" name="property_id" id="property_id" value="{{ $value->property->id }}">
-
-                        <div class="form-group">
-                          <label for="inputPropery">Property Name</label>
-                          {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
-                          {{-- <select style="width:100%;"   id="property" name="property" >
-                            <option></option>
-                          </select> --}}
-                          <input type="text" class="form-control" id="property" name="property" placeholder="Value" value="{{ $value->property->name }}" disabled>
-                          {{-- <small id="propertyHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
-                        </div>
-                        <div class="form-group">
-                          <label for="value">Value</label>
-                          <input type="text" class="form-control" id="value" name="value" placeholder="Value" value="{{ $value->value }}">
-                        </div>
-                        <div class="form-group">
-                          <label for="question_asked">Question asked ?</label>
-                          <input type="text" class="form-control" id="question_asked" name="question_asked" placeholder="question asked?" value="{{ $value->question_asked }}">
-                        </div>
-                        <div class="form-group">
-                          <label for="value">Information source</label>
-                          <input type="text" class="form-control" id="information_source" name="information_source" placeholder="information source" value="{{ $value->information_source }}">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
                 </div>
             </div>
         </div>
