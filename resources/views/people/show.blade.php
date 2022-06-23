@@ -26,10 +26,11 @@ $(document).ready(function() {
                     <h2>{{ $people->name }}</h2>
                     <img height="100" src="{{asset('photos/'.$people->photo) }}" alt="" title="">
                     </br>
-                    <a href="{{ route('people.add') }}?reference={{ $people->id }}">Add Relative</a> 
+                    <a href="{{ route('people.create', ['reference' => $people->id ]) }}">Add Relative</a> 
                     </br>
                     @foreach( $values as $value)
-                      <a href="edit/{{ $value['value_id'] }}"><i class="fas fa-edit"></i> </a>
+                    {{-- showEditPeopleInformationForm --}}
+                      <a href="{{ route('people.edit', [$people->id, 'value'=> $value['value_id'] ]) }}"><i class="fas fa-edit"></i> </a>
                       <a href="delete/{{ $value['value_id'] }}"><i class="fas fa-trash"></i> </a>
                       {{ $value['property_name'] . ' - ' . $value['value']  }} <br>
                     @endforeach
@@ -64,6 +65,11 @@ $(document).ready( function() {
   	"closeButton" : true,
   	"progressBar" : true
   };
+  
+  @if( request()->get('message') )
+    toastr.success("{{ request()->get('message') }}");
+    // {{ request()->fullUrlWithQuery(['message' => null]) }}
+  @endif
 
   function listProperties(){
     $.getJSON("/people/listproperties",function(response){
