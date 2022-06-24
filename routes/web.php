@@ -22,12 +22,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix('people')->group(function(){
-    Route::get('list', [PeopleController::class, 'listPeople'])->name('people.list');
-
     Route::get('list-human-relations', [PeopleController::class, 'listHumanRelations']);
-    Route::post('{people}/update/{value}', [PeopleController::class, 'updatePeoplePropertyValue']);
-    Route::get('{people}/delete/{value}', [PeopleController::class, 'deletePeoplePropertyValue']);
-
     Route::get('listproperties', [PeopleController::class, 'listproperties']);
     Route::post('addinfo', [PeopleController::class, 'addInfo']);
 });

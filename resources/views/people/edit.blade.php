@@ -25,13 +25,10 @@
                     @endif
                     
                     <h2>{{ $people->name }}</h2>
-                    
-                    
-                    <form id="form" action="{{ url('/people/'. $people->id .'/update/'. $value->id ) }}" method="post">
+                    <form id="form" action="{!! route('people.update', $people->id) !!}" method="post">
                       @csrf
-                      <input type="hidden" name="people_id" id="people_id" value="{{$people->id}}">
-                      <input type="hidden" name="property_id" id="property_id" value="{{ $value->property->id }}">
-
+                      @method('PATCH')
+                        <input type="hidden" name="value_id" value="{{ $value->id }}">
                         <div class="form-group">
                           <label for="inputPropery">Property Name</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="propertyHelp" placeholder="Enter email"> --}}
