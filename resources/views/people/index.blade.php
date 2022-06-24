@@ -92,7 +92,7 @@ $(document).ready(function() {
 $(document).ready( function() {
   
 
-  $.getJSON("/people/listproperties",function(response){
+  $.getJSON("/people/list-properties",function(response){
     let data = response.data;
     data = JSON.parse(data); //convert to javascript array
     values = '<option selected disabled>Select a property</option>';

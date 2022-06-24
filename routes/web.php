@@ -23,7 +23,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix('people')->group(function(){
     Route::get('list-human-relations', [PeopleController::class, 'listHumanRelations']);
-    Route::get('listproperties', [PeopleController::class, 'listproperties']);
+    Route::get('list-properties', [PeopleController::class, 'listProperties']);
     Route::post('addinfo', [PeopleController::class, 'addInfo']);
 });
 

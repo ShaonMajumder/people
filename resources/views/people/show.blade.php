@@ -93,7 +93,7 @@ $(document).ready(function() {
     @endif
 
     function listProperties(){
-      $.getJSON("/people/listproperties",function(response){
+      $.getJSON("/people/list-properties",function(response){
         let data = response.data;
         data = JSON.parse(data);
         values = '<option selected disabled>Select a property</option>';
