@@ -165,6 +165,12 @@ class PeopleController extends Controller
         return view('people.edit',compact('people','value'))->with('message',$message);
     }
 
+    public function updatePeoplePropertyValue(Request $request,People $people,Value $value){
+        $new_request = $request->except(['_token']);
+        $value->update($new_request);
+        return Redirect::route('people.show',[$people->id, 'message' => 'Successfully updated ...']);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -174,7 +180,11 @@ class PeopleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $value = Value::findOrFail($request->value_id);
+        $new_request = $request->except(['_token']);
+        $value->update($new_request);
+        $people = People::findOrFail($id);
+        return Redirect::route('people.show',[$people->id, 'message' => 'Successfully updated ...']);
     }
 
     /**
@@ -183,10 +193,17 @@ class PeopleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
-        $people = People::findOrFail($id);
-        $people->delete();
-        return Redirect::route('people.index',['message' => 'Successfully deleted ...']);
+    public function destroy($id,Request $request) {
+        if($request->value){
+            $value = Value::findOrFail($request->value);
+            $value->delete();
+            return Redirect::route('people.show',[$id,'message' => 'Successfully deleted ...']);
+        }else{
+            $people = People::findOrFail($id);
+            $people->delete();
+            return Redirect::route('people.index',['message' => 'Successfully deleted ...']);
+        }
+        
     }
 
     public function listHumanRelations(){
@@ -203,28 +220,7 @@ class PeopleController extends Controller
         return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
     }
 
-    public function deletePeoplePropertyValue(Request $request,People $people,Value $value){
-        $value->delete();
-        $values = People::join('values', 'values.people_id', '=', 'people.id')
-                        ->join('properties', 'properties.id', '=', 'values.property_id')
-                        // ->select('property_id')
-                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
-                        ->get()
-                        ->toArray();
-        return Redirect::route('people.show',[$people->id, 'message' => 'Successfully deleted ...']);
-    }
-
-    public function updatePeoplePropertyValue(Request $request,People $people,Value $value){
-        $new_request = $request->except(['_token']);
-        $value->update($new_request);
-        $values = People::join('values', 'values.people_id', '=', 'people.id')
-                        ->join('properties', 'properties.id', '=', 'values.property_id')
-                        // ->select('property_id')
-                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
-                        ->get()
-                        ->toArray();
-        return Redirect::route('people.show',[$people->id, 'message' => 'Successfully updated ...']);
-    }
+    
 
     
     
@@ -234,36 +230,5 @@ class PeopleController extends Controller
 
     
 
-    public function addInfo(Request $request){
-        // people_id
-        // dd($request->all());
-        $text = null;
-        $property_id = null;
-        if( ! is_numeric($request->property)  ){ // and ! Property::where('name',$request->property)->first()
-            
-            $property = new Property();
-            $property->name = $request->property;
-            $property->causer_id = Auth::user()->id;
-            $property->save();
-            $property_id = $property->id;
-            $text = "New Property '$request->property' added";
-        }
-
-         
-        $value = new Value();
-        $value->people_id = $request->people_id;
-        $value->property_id = $property_id ?? $request->property;
-        $value->value = $request->value;
-        $value->save();
-
-        
-
-        $text = $text ? $text." and data added ..." : "Data added ...";
-        
-        $this->apiSuccess();
-        return $this->apiOutput(Response::HTTP_OK, $text);
-        // $people = People::find($request->people_id)->first();
-        // return $this->showAddPeopleInformationForm($people);
-        
-    }
+    
 }
