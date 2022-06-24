@@ -206,6 +206,40 @@ class PeopleController extends Controller
         
     }
 
+    /**
+     * Add a new value for a people
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function addInfo(Request $request){
+        // people_id
+        // dd($request->all());
+        $text = null;
+        $property_id = null;
+        if( ! is_numeric($request->property)  ){ // and ! Property::where('name',$request->property)->first()
+            
+            $property = new Property();
+            $property->name = $request->property;
+            $property->causer_id = Auth::user()->id;
+            $property->save();
+            $property_id = $property->id;
+            $text = "New Property '$request->property' added";
+        }
+
+        $value = new Value();
+        $value->people_id = $request->people_id;
+        $value->property_id = $property_id ?? $request->property;
+        $value->value = $request->value;
+        $value->save();
+
+
+        $text = $text ? $text." and data added ..." : "Data added ...";
+        
+        $this->apiSuccess();
+        return $this->apiOutput(Response::HTTP_OK, $text);
+    }
+
     public function listHumanRelations(){
         $human_relations = HumanRelation::get();
         $this->data = $human_relations->toJson();
