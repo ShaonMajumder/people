@@ -38,7 +38,7 @@ $(document).ready(function() {
 
                 <div class="card-body">
                   <div class="container mt-5" style="overflow-x: auto;">
-                    <a href="{{ url("people/new") }}">Add New People</a>
+                    <a href="{{ route("people.create") }}">Add New People</a>
 
                     <table class="table table-striped">
                         <thead>
@@ -57,16 +57,19 @@ $(document).ready(function() {
                             @foreach($peoples as $people)
                                 <tr>
                                   <td>
-                                    <a href="/people/{{$people->id}}/add"><i class="fa-solid fa-plus"></i></a>
-                                    <a href="/people/{{$people->id}}/delete/"><i class="fa-solid fa-trash"></i></a>
+                                    <a href="{{ route('people.show', [$people->id]) }}"><i class="fa-solid fa-plus"></i></a>
+                                    <form method="POST" action="{{ route('people.destroy', [$people->id]) }}">
+                                      @csrf
+                                      @method('DELETE')
+                                      <i class="fa-solid fa-trash" onclick="$(this).parent().submit()"></i>
+                                    </form>
                                   </td>
                                   @foreach ($people->toArray() as $key => $item)
                                     
                                     @if($item and $key == 'photo')
                                       <td><img height="40" src="{{asset('photos/'.$item) }}" alt="" title=""></td>
                                     @elseif($people->reference and $key == 'reference_type')
-                                      {{-- @dd($people->reference->name) --}}
-                                      <td><a href="{{$people->reference->id}}/add">{{ $people->reference->name }}</a></td>
+                                      <td><a href="{{ route('people.show',[$people->reference->id]) }}">{{ $people->reference->name }}</a></td>
                                     @else
                                       <td>{{ $item }}</td>
                                     @endif
@@ -89,7 +92,7 @@ $(document).ready(function() {
 $(document).ready( function() {
   
 
-  $.getJSON("/people/listproperties",function(response){
+  $.getJSON("/people/list-properties",function(response){
     let data = response.data;
     data = JSON.parse(data); //convert to javascript array
     values = '<option selected disabled>Select a property</option>';

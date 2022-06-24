@@ -27,7 +27,7 @@ $(document).ready(function() {
                         </div>
                     @endif
 
-                    <form id="form" action="{{url('people/insert')}}" method="post">
+                    <form id="form" action="{{ route('people.store') }}" method="post">
                       @csrf
                         <div class="form-group">
                           <label for="name">Full Name</label>
@@ -121,7 +121,7 @@ $(document).ready( function() {
   	"progressBar" : true
   };
 
-  $.getJSON("/people/listproperties",function(response){
+  $.getJSON("/people/list-properties",function(response){
     let data = response.data;
     data = JSON.parse(data); //convert to javascript array
     values = '<option selected disabled>Select a property</option>';
@@ -156,14 +156,14 @@ $(document).ready( function() {
     }
 
     $.ajax({
-      url: "/people/insert",
+      url: "{{ route('people.store') }}",
       type:"POST",
       data: formData,
       processData: false,  // tell jQuery not to process the data
       contentType: false,  // tell jQuery not to set contentType
       success:function(response){
         // toastr.success(response.message);
-        window.location.href = "{{ route('people.list','message=New People added ...') }}";
+        window.location.href = "{{ route('people.index','message=New People added ...') }}";
         if(response.status)
           $('#form')[0].reset();
       },

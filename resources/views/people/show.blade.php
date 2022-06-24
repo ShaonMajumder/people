@@ -26,11 +26,16 @@ $(document).ready(function() {
                     <h2>{{ $people->name }}</h2>
                     <img height="100" src="{{asset('photos/'.$people->photo) }}" alt="" title="">
                     </br>
-                    <a href="{{ route('people.add') }}?reference={{ $people->id }}">Add Relative</a> 
+                    <a href="{{ route('people.create', ['reference' => $people->id ]) }}">Add Relative</a> 
                     </br>
                     @foreach( $values as $value)
-                      <a href="edit/{{ $value['value_id'] }}"><i class="fas fa-edit"></i> </a>
-                      <a href="delete/{{ $value['value_id'] }}"><i class="fas fa-trash"></i> </a>
+                      <a href="{{ route('people.edit', [$people->id, 'value'=> $value['value_id'] ]) }}"><i class="fas fa-edit"></i> </a>
+                      <form id="form-{{ $value['value_id'] }}" style="display: inline-block;" method="POST" action="{{ route('people.destroy', [$people->id] ) }}">
+                        @csrf
+                        @method('delete')
+                        <input type="hidden" name="value" value="{{ $value['value_id'] }}">
+                        <i class="fas fa-trash" onclick="getDeletePermission({{ $value['value_id'] }})"></i>
+                      </form>
                       {{ $value['property_name'] . ' - ' . $value['value']  }} <br>
                     @endforeach
                     
@@ -58,57 +63,75 @@ $(document).ready(function() {
     </div>
 </div>
 <script type="text/javascript">
-$(document).ready( function() {
-  toastr.options =
-  {
-  	"closeButton" : true,
-  	"progressBar" : true
-  };
-
-  function listProperties(){
-    $.getJSON("/people/listproperties",function(response){
-      let data = response.data;
-      data = JSON.parse(data); //convert to javascript array
-      values = '<option selected disabled>Select a property</option>';
-      $.each(data,function(key,value){
-        
-        values+="<option value='"+value.id+"'>"+value.name+"</option>";
-      });
-      $("#property").html(values); 
+  function getDeletePermission(value_id){
+    swal({
+      title: "Are you sure?",
+      text: "You are going to delete "+value_id+"!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        $('#form-'+value_id).submit();
+      } else {
+        swal("Your value is safe!");
+      }
     });
   }
-  listProperties();
   
-
-
-  $("#form").submit(function(e){
+  $(document).ready( function() {
+    toastr.options =
+    {
+      "closeButton" : true,
+      "progressBar" : true
+    };
     
-    e.preventDefault();
+    @if( request()->get('message') )
+      toastr.success("{{ request()->get('message') }}");
+      // {{ request()->fullUrlWithQuery(['message' => null]) }}
+    @endif
 
-    let people_id = $('#people_id').val();
-    let property = $('#property').val();
-    let value = $('#value').val();
+    function listProperties(){
+      $.getJSON("/people/list-properties",function(response){
+        let data = response.data;
+        data = JSON.parse(data);
+        values = '<option selected disabled>Select a property</option>';
+        $.each(data,function(key,value){
+          values+="<option value='"+value.id+"'>"+value.name+"</option>";
+        });
+        $("#property").html(values); 
+      });
+    }
+    listProperties();
     
-    $.ajax({
-      url: "/people/addinfo",
-      type:"POST",
-      data:{
-        "_token": "{{ csrf_token() }}",
-        people_id:people_id,
-        property:property,
-        value:value
-      },
-      success:function(response){
-        // toastr.success(response.message);
-        // listProperties();
-        location.reload();
-      },
-      error: function(response) {
-        toastr.error(response.message);
-      },
+    $("#form").submit(function(e){  
+      e.preventDefault();
+
+      let people_id = $('#people_id').val();
+      let property = $('#property').val();
+      let value = $('#value').val();
+      
+      $.ajax({
+        url: "/people/addinfo",
+        type:"POST",
+        data:{
+          "_token": "{{ csrf_token() }}",
+          people_id:people_id,
+          property:property,
+          value:value
+        },
+        success:function(response){
+          // toastr.success(response.message);
+          // listProperties();
+          location.reload();
+        },
+        error: function(response) {
+          toastr.error(response.message);
+        },
+      });
     });
   });
-});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
