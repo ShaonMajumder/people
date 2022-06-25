@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Components\DBTrait;
 use App\Http\Components\Message;
 use App\Models\HumanRelation;
 use App\Models\InteractionStatus;
@@ -14,12 +15,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class PeopleController extends Controller
 {
-    use Message;
+    use Message,DBTrait;
 
     public function __construct()
     {
@@ -32,12 +34,7 @@ class PeopleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index($message=null,$redirect=false) {
-        $columns=[];
-        $query = "SHOW COLUMNS FROM people";
-        $results = DB::select($query);
-        foreach($results as $result)
-            array_push($columns,$result->Field);
-        $peoples = People::latest()->paginate(10);
+        list($columns,$peoples) = $this->getDBListing(new People());
         
         if($message){
             return view('people.index',compact('peoples','columns'))->with('message','New People added ...');
