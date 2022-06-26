@@ -35,7 +35,7 @@ $(document).ready(function() {
                         </div>
 
                         @isset($reference)
-                          {{-- @dd($reference) --}}
+                          
                           <div class="form-group">
                             <label for="reference_type">Relative / Reference Type</label>
                             <select style="width:100%;" id="reference_type" name="reference_type" > </select>
@@ -121,7 +121,7 @@ $(document).ready( function() {
   	"progressBar" : true
   };
 
-  $.getJSON("/people/listproperties",function(response){
+  $.getJSON("/people/list-properties",function(response){
     let data = response.data;
     data = JSON.parse(data); //convert to javascript array
     values = '<option selected disabled>Select a property</option>';

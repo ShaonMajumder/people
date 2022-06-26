@@ -25,7 +25,21 @@
                     @endif
                     
                     <h2>{{ $people->name }}</h2>
+<<<<<<< HEAD:resources/views/people/info/add.blade.php
+                    <img height="100" src="{{asset('photos/'.$people->photo) }}" alt="" title="">
+                    </br>
+                    <a href="{{ route('people.create') }}?reference={{ $people->id }}">Add Relative</a> 
+                    </br>
+                    @foreach( $values as $value)
+                      <a href="{{ $people->id }}/edit/{{ $value['value_id'] }}"><i class="fas fa-edit"></i> </a>
+                      <a href="{{ $people->id }}/delete/{{ $value['value_id'] }}"><i class="fas fa-trash"></i> </a>
+                      {{ $value['property_name'] . ' - ' . $value['value']  }} <br>
+                    @endforeach
+                    
+                    <form id="form" action="{{url('people/insert')}}" method="post">
+=======
                     <form id="form" action="{!! route('people.update', $people->id) !!}" method="post">
+>>>>>>> b641b4d45132921e61037422708299f38aeae07a:resources/views/people/edit.blade.php
                       @csrf
                       @method('PATCH')
                         <input type="hidden" name="value_id" value="{{ $value->id }}">
@@ -85,7 +99,37 @@ $(document).ready( function() {
   
 
 
+<<<<<<< HEAD:resources/views/people/info/add.blade.php
+  $("#form").submit(function(e){
+    
+    e.preventDefault();
+
+    let people_id = $('#people_id').val();
+    let property = $('#property').val();
+    let value = $('#value').val();
+    
+    $.ajax({
+      url: "/people/{{ $people->id }}/addinfo",
+      type:"POST",
+      data:{
+        "_token": "{{ csrf_token() }}",
+        people_id:people_id,
+        property:property,
+        value:value
+      },
+      success:function(response){
+        // toastr.success(response.message);
+        // listProperties();
+        location.reload();
+      },
+      error: function(response) {
+        toastr.error(response.message);
+      },
+    });
+  });
+=======
   
+>>>>>>> b641b4d45132921e61037422708299f38aeae07a:resources/views/people/edit.blade.php
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

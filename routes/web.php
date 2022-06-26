@@ -21,28 +21,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-// Route::prefix('people')->group(function(){
-//     Route::get('list', [PeopleController::class, 'listPeople'])->name('people.list');
-
-    
-//     // Route::get('{people}', [PeopleController::class, 'showAddPeopleInformationForm']);
-//     Route::get('{people}', [PeopleController::class, 'show'])->name('people.info');
-//     Route::delete('{people}/delete', [PeopleController::class, 'destroy'])->name('people.delete');    
-
-
-
-//     
-
-
-//     Route::post('addinfo', [PeopleController::class, 'addInfo']);
-// });
 
 Route::prefix('people')->group(function(){
     Route::get('list-human-relations', [PeopleController::class, 'listHumanRelations']);
-    Route::get('listproperties', [PeopleController::class, 'listproperties']);
-    Route::post('{people}/addinfo', [PeopleController::class, 'addInfo']);
-    Route::get('{people}/delete/{value}', [PeopleController::class, 'deletePeoplePropertyValue']);
-    Route::post('{people}/edit/{value}', [PeopleController::class, 'showEditPeopleInformationForm'])->name('people.info.edit');
-    Route::post('{people}/update/{value}', [PeopleController::class, 'updatePeoplePropertyValue'])->name('people.info.update');
+    Route::get('list-properties', [PeopleController::class, 'listProperties']);
+    Route::post('addinfo', [PeopleController::class, 'addInfo']);
 });
+
 Route::resource('people', PeopleController::class);
