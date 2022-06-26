@@ -247,4 +247,16 @@ class PeopleController extends Controller
     public function showEditPeopleInformationForm(People $people, Value $value, $message=''){
         return view('people.info.edit',compact('people','value'))->with('message',$message);
     }
+
+    public function updatePeoplePropertyValue(Request $request,People $people,Value $value){
+        $new_request = $request->except(['_token']);
+        $value->update($new_request);
+        $values = People::join('values', 'values.people_id', '=', 'people.id')
+                        ->join('properties', 'properties.id', '=', 'values.property_id')
+                        // ->select('property_id')
+                        ->select('*','people.name as name','properties.name as property_name','values.id as value_id')
+                        ->get()
+                        ->toArray();
+        return Redirect::route('people.info',array('people' => $people,'values' => $values))->with('message','Successfully updated ...');
+    }
 }

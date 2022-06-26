@@ -31,7 +31,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 
-//     Route::post('{people}/update/{value}', [PeopleController::class, 'updatePeoplePropertyValue']);
+//     
 
 
 //     Route::post('addinfo', [PeopleController::class, 'addInfo']);
@@ -42,7 +42,7 @@ Route::prefix('people')->group(function(){
     Route::get('listproperties', [PeopleController::class, 'listproperties']);
     Route::post('{people}/addinfo', [PeopleController::class, 'addInfo']);
     Route::get('{people}/delete/{value}', [PeopleController::class, 'deletePeoplePropertyValue']);
-    
-    Route::get('{people}/edit/{value}', [PeopleController::class, 'showEditPeopleInformationForm']);
+    Route::post('{people}/edit/{value}', [PeopleController::class, 'showEditPeopleInformationForm'])->name('people.info.edit');
+    Route::post('{people}/update/{value}', [PeopleController::class, 'updatePeoplePropertyValue'])->name('people.info.update');
 });
 Route::resource('people', PeopleController::class);

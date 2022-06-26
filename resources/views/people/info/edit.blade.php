@@ -26,7 +26,15 @@
                     
                     <h2>{{ $people->name }}</h2>
                     
-                    
+                    {{-- @dd($value->property->name) --}}
+                    <form id="form" action="{{ route('people.info.edit', [$people->id,$value->id]) }}" method="post">
+                      @csrf  
+                      <div class="form-group">
+                        <label for="name">{{ $value->property->name }}</label>
+                        <input type="text" class="form-control" id="value" name="value" value="{{ $value->value }}" placeholder="value">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
